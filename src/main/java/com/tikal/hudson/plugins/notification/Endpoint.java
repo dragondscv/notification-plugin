@@ -21,55 +21,47 @@ import org.kohsuke.stapler.QueryParameter;
 
 public class Endpoint {
 
-	private Protocol protocol;
+  private Protocol protocol;
+  private Format format;
+  private String url;
 
-    /**
-     * json as default
-     */
-	private Format format = Format.JSON;
+  @DataBoundConstructor
+  public Endpoint(Protocol protocol, String url, Format format) {
+    this.protocol = protocol;
+    this.url = url;
+    this.format = format;
+  }
 
-	private String url;
+  public Protocol getProtocol() {
+    return protocol;
+  }
 
-	@DataBoundConstructor
-	public Endpoint(Protocol protocol, String url, Format format) {
-		this.protocol = protocol;
-		this.url = url;
-		this.format = format;
-	}
+  public void setProtocol(Protocol protocol) {
+    this.protocol = protocol;
+  }
 
-	public Protocol getProtocol() {
-		return protocol;
-	}
+  public String getUrl() {
+    return url;
+  }
 
-	public void setProtocol(Protocol protocol) {
-		this.protocol = protocol;
-	}
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
-	public String getUrl() {
-		return url;
-	}
+  public Format getFormat() {
+    return format;
+  }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-	
-	public Format getFormat() {
-        if (this.format==null){
-            this.format = Format.JSON;
-        }
-		return format;
-	}
-	
-	public void setFormat(Format format) {
-		this.format = format;
-	}
+  public void setFormat(Format format) {
+    this.format = format;
+  }
 
-	public FormValidation doCheckURL(@QueryParameter(value = "url", fixEmpty = true) String url) {
-		if (url.equals("111"))
-			return FormValidation.ok();
-		else
-			return FormValidation.error("There's a problem here");
-	}
+  public FormValidation doCheckURL(@QueryParameter(value = "url", fixEmpty = true) String url) {
+    if (url.equals("111"))
+      return FormValidation.ok();
+    else
+      return FormValidation.error("There's a problem here");
+  }
 
     @Override
     public String toString() {

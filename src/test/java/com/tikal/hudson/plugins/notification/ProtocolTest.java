@@ -219,13 +219,13 @@ public class ProtocolTest extends TestCase {
     assertTrue(requests.isEmpty());
 
     String uri = urlFactory.getUrl("/realpath");
-    Protocol.HTTP.send(uri, "Hello".getBytes());
+    Protocol.HTTP.send(uri, "Hello");
 
     assertEquals(new Request(uri, "POST", "Hello"), requests.take());
     assertTrue(requests.isEmpty());
   }
 
-   public void testHttpPostWithBasicAuth() throws Exception {
+  public void testHttpPostWithBasicAuth() throws Exception {
     BlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
 
     UrlFactory urlFactory = startSecureServer(new RecordingServlet(requests), "/realpath", "fred:foo");
@@ -233,14 +233,14 @@ public class ProtocolTest extends TestCase {
     assertTrue(requests.isEmpty());
 
     String uri = urlFactory.getUrl("/realpath");
-    Protocol.HTTP.send(uri, "Hello".getBytes());
+    Protocol.HTTP.send(uri, "Hello");
 
     Request theRequest = requests.take();
     assertTrue(requests.isEmpty());
     assertEquals(new Request(uri, "POST", "Hello").getUrl(), theRequest.getUrlWithAuthority());
   }
 
- public void testHttpPostWithRedirects() throws Exception {
+  public void testHttpPostWithRedirects() throws Exception {
     BlockingQueue<Request> requests = new LinkedBlockingQueue<Request>();
 
     UrlFactory urlFactory = startServer(new RecordingServlet(requests), "/realpath");
@@ -251,7 +251,7 @@ public class ProtocolTest extends TestCase {
     assertTrue(requests.isEmpty());
 
     String uri = redirectorUrlFactory.getUrl("/path");
-    Protocol.HTTP.send(uri, "RedirectMe".getBytes());
+    Protocol.HTTP.send(uri, "RedirectMe");
 
     assertEquals(new Request(uri, "POST", "RedirectMe"), requests.take());
     assertEquals(new Request(redirectUri, "POST", "RedirectMe"), requests.take());

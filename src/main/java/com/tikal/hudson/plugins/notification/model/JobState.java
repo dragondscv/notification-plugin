@@ -15,36 +15,90 @@ package com.tikal.hudson.plugins.notification.model;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+
 @XStreamAlias("job")
 public class JobState {
 
-	private String name;
+  private String name;
 
-	private String url;
+  private String url;
 
-	private BuildState build;
+  // add more fields
+  private String upstreamJobName;
 
-	public String getName() {
-		return name;
-	}
+  private String description;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  private String displayName;
 
-	public String getUrl() {
-		return url;
-	}
+  private String fullDisplayName;
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+  private BuildState build;
 
-	public BuildState getBuild() {
-		return build;
-	}
+  private TestResultState testResultState;
 
-	public void setBuild(BuildState build) {
-		this.build = build;
-	}
+  public String getUpstreamJobName() {
+    return upstreamJobName;
+  }
+
+  public void setUpstreamJobName(String upstreamJobName) {
+    this.upstreamJobName = upstreamJobName;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
+
+  // add getter and setter for newly added fields
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  public void setDisplayName(String displayName) {
+    this.displayName= displayName;  
+  }
+
+  public String getFullDisplayName() {
+    return fullDisplayName;
+  }
+
+  public void setFullDisplayName(String fullDisplayName) {
+    this.fullDisplayName = fullDisplayName;
+  }
+
+
+  public BuildState getBuild() {
+    return build;
+  }
+
+  public void setBuild(BuildState build) {
+    this.build = build;
+  }
+
+  public TestResultState getTestResultState() {
+    return testResultState;
+  }
+
+  public void setTestResultState(TestResultState testResultState) {
+    this.testResultState = testResultState;
+  }
 }

@@ -31,68 +31,134 @@ import org.kohsuke.stapler.StaplerRequest;
 @Extension
 public final class HudsonNotificationPropertyDescriptor extends JobPropertyDescriptor {
 
-	public HudsonNotificationPropertyDescriptor() {
-		super(HudsonNotificationProperty.class);
-		load();
-	}
+  public HudsonNotificationPropertyDescriptor() {
+    super(HudsonNotificationProperty.class);
+    load();
+  }
 
-	private List<Endpoint> endpoints = new ArrayList<Endpoint>();
+  private List<Endpoint> endpoints = new ArrayList<Endpoint>();
+  private int maxLinesForLog = 100;
+  private boolean enableLog = false;
+  private boolean enableTestResult = false;
 
-	public boolean isEnabled() {
-		return !endpoints.isEmpty();
-	}
+  public boolean isEnabled() {
+    return !endpoints.isEmpty();
+  }
 
-	public List<Endpoint> getTargets() {
-		return endpoints;
-	}
+  public int getMaxLinesForLog() {
+    return maxLinesForLog;
+  }
 
-	public void setEndpoints(List<Endpoint> endpoints) {
-		this.endpoints = endpoints;
-	}
+  public boolean getEnableLog() {
+    return enableLog;
+  }
 
-	@Override
-	public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends Job> jobType) {
-		return true;
-	}
+  public boolean getEnableTestResult() {
+    return enableTestResult;
+  }
 
-	public String getDisplayName() {
-		return "Hudson Job Notification";
-	}
+  public List<Endpoint> getEndpoints() {
+    return endpoints;
+  }
 
-	@Override
-	public HudsonNotificationProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+  public void setEndpoints(List<Endpoint> endpoints) {
+    this.endpoints = endpoints;
+  }
 
-		List<Endpoint> endpoints = new ArrayList<Endpoint>();
-		if (formData != null && !formData.isNullObject()) {
-			JSON endpointsData = (JSON) formData.get("endpoints");
-			if (endpointsData != null && !endpointsData.isEmpty()) {
-				if (endpointsData.isArray()) {
-					JSONArray endpointsArrayData = (JSONArray) endpointsData;
-					endpoints.addAll(req.bindJSONToList(Endpoint.class, endpointsArrayData));
-				} else {
-					JSONObject endpointsObjectData = (JSONObject) endpointsData;
-					endpoints.add(req.bindJSON(Endpoint.class, endpointsObjectData));
-				}
-			}
-		}
-		HudsonNotificationProperty notificationProperty = new HudsonNotificationProperty(endpoints);
-		return notificationProperty;
-	}
+  @Override
+  public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends Job> jobType) {
+    return true;
+  }
 
-	public FormValidation doCheckUrl(@QueryParameter(value = "url", fixEmpty = true) String url, @QueryParameter(value = "protocol") String protocolParameter) {
-		Protocol protocol = Protocol.valueOf(protocolParameter);
-		try {
-			protocol.validateUrl(url);
-			return FormValidation.ok();
-		} catch (Exception e) {
-			return FormValidation.error(e.getMessage());
-		}
-	}
+  public String getDisplayName() {
+    return "Hudson Job Notification";
+  }
 
-	@Override
-	public boolean configure(StaplerRequest req, JSONObject formData) {
-		save();
-		return true;
-	}
+  @Override
+  public HudsonNotificationProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
 
+    List<Endpoint> endpoints = new ArrayList<Endpoint>();
+    int maxLinesForLog = 100;
+
+    if (formData != null && !formData.isNullObject()) {
+
+      maxLinesForLog = formData.getInt("maxLinesForLog");
+
+      JSON endpointsData = (JSON) formData.get("endpoints");
+      if (endpointsData != null && !endpointsData.isEmpty()) {
+        if (endpointsData.isArray()) {
+          JSONArray endpointsArrayData = (JSONArray) endpointsData;
+          endpoints.addAll(req.bindJSONToList(Endpoint.class, endpointsArrayData));
+        } else {
+          JSONObject endpointsObjectData = (JSONObject) endpointsData;
+          endpoints.add(req.bindJSON(Endpoint.class, endpointsObjectData));
+        }
+      }
+    }
+    HudsonNotificationProperty notificationProperty = new HudsonNotificationProperty(endpoints, maxLinesForLog);
+    return notificationProperty;
+  }
+
+  public FormValidation doCheckUrl(@QueryParameter(value = "url", fixEmpty = true) String url, @QueryParameter(value = "protocol") String protocolParameter) {
+    Protocol protocol = Protocol.valueOf(protocolParameter);
+    try {
+      protocol.validateUrl(url);
+      return FormValidation.ok();
+    } catch (Exception e) {
+      return FormValidation.error(e.getMessage());
+    }
+  }
+
+  // check if maxLinesForLog is a valid number
+  public FormValidation doCheckMaxLinesForLog(@QueryParameter String value) {
+    try {
+      Integer.parseInt(value);
+      return FormValidation.ok();
+    } catch (NumberFormatException e) {
+      return FormValidation.error("Not a number");
+    }
+  }
+
+  @Override
+  public boolean configure(StaplerRequest req, JSONObject formData) throws FormException{
+
+    if (formData != null && !formData.isNullObject()) {
+
+      // check if test result is enabled
+      if(req.getParameter("enableTestResult") == null) {
+        enableTestResult = false;
+      } else {
+        enableTestResult = true;
+      }
+
+      // check if log is enabled
+      if(req.getParameter("enableLog") == null) {
+        enableLog = false;
+      } else {
+        enableLog = true;
+      }
+
+      if (enableLog) {
+        maxLinesForLog = Integer.parseInt(formData.getJSONObject("enableLog").getString("maxLinesForLog"));
+      }
+
+      endpoints.clear();
+
+      JSON endpointsData = (JSON) formData.get("endpoints");
+
+      if (endpointsData != null && !endpointsData.isEmpty()) {
+        if (endpointsData.isArray()) {
+          JSONArray endpointsArrayData = (JSONArray) endpointsData;
+          endpoints.addAll(req.bindJSONToList(Endpoint.class, endpointsArrayData));
+        } else {
+          JSONObject endpointsObjectData = (JSONObject) endpointsData;
+          endpoints.add(req.bindJSON(Endpoint.class, endpointsObjectData));
+        }
+      }
+    }
+
+    save();
+    //return true;
+    return super.configure(req,formData);
+  }
 }

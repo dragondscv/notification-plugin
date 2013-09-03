@@ -21,20 +21,26 @@ import java.util.List;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class HudsonNotificationProperty extends
-		JobProperty<AbstractProject<?, ?>> {
+    JobProperty<AbstractProject<?, ?>> {
 
-	final public List<Endpoint> endpoints;
+  final public List<Endpoint> endpoints;
+  final public int maxLinesForLog;
 
-	@DataBoundConstructor
-	public HudsonNotificationProperty(List<Endpoint> endpoints) {
-		this.endpoints = endpoints;
-	}
+  @DataBoundConstructor
+  public HudsonNotificationProperty(List<Endpoint> endpoints, int maxLinesForLog) {
+    this.endpoints = endpoints;
+    this.maxLinesForLog = maxLinesForLog;
+  }
 
-	public List<Endpoint> getEndpoints() {
-		return endpoints;
-	}
+  public List<Endpoint> getEndpoints() {
+    return endpoints;
+  }
 
-	public HudsonNotificationPropertyDescriptor getDescriptor() {
-		return (HudsonNotificationPropertyDescriptor) super.getDescriptor();
-	}
+  public HudsonNotificationPropertyDescriptor getDescriptor() {
+    return (HudsonNotificationPropertyDescriptor) super.getDescriptor();
+  }
+
+  public int getMaxLinesForLog() {
+    return maxLinesForLog;
+  }
 }

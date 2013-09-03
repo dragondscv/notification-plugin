@@ -25,6 +25,7 @@
 											<f:option value="UDP" selected="${endpoint.protocol=='UDP'}">UDP</f:option>
 											<f:option value="TCP" selected="${endpoint.protocol=='TCP'}">TCP</f:option>
 											<f:option value="HTTP" selected="${endpoint.protocol=='HTTP'}">HTTP</f:option>
+											<f:option value="JEDIS" selected="${endpoint.protocol=='JEDIS'}">JEDIS</f:option>
 										</select>
 									</f:entry>
 								</td>
@@ -45,5 +46,9 @@
 				</table>
 			</f:repeatable>
 		</f:entry>
+
+    <f:entry title="Max Lines for Log" field="maxLinesForLog">
+      <f:textbox default="100" />
+    </f:entry>
 	</f:section>
 </j:jelly>

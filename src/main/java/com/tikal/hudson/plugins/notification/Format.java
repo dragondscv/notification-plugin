@@ -22,23 +22,23 @@ import com.thoughtworks.xstream.XStream;
 import com.tikal.hudson.plugins.notification.model.JobState;
 
 public enum Format {
-	XML {
-		private XStream xstream = new XStream();
+  XML {
+    private XStream xstream = new XStream();
 
-		@Override
-		protected byte[] serialize(JobState jobState) throws IOException {
-			xstream.processAnnotations(JobState.class);
-			return xstream.toXML(jobState).getBytes();
-		}
-	},
-	JSON {
-		private Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-		
-		@Override
-		protected byte[] serialize(JobState jobState) throws IOException {
-			return gson.toJson(jobState).getBytes();
-		}
-	};
-  
-  abstract protected byte[] serialize(JobState jobState) throws IOException;
+    @Override
+    protected String toString(JobState jobState) throws IOException {
+      xstream.processAnnotations(JobState.class);
+      return xstream.toXML(jobState);
+    }
+  },
+  JSON {
+    private Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+
+    @Override
+    protected String toString(JobState jobState) throws IOException {
+      return gson.toJson(jobState);
+    }
+  };
+
+  abstract protected String toString(JobState jobState) throws IOException;
 }
